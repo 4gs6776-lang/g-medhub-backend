@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const pool = require('./src/config/db'); // Import the database connection
+const pool = require('./src/config/db');
+const authRoutes = require('./src/routes/authRoutes'); // Import Auth Routes
 
 const app = express();
 
@@ -9,12 +10,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Basic route to check if server is running
+// Basic route
 app.get('/', (req, res) => {
   res.send('G-MedHub Backend is Successfully Running!');
 });
 
-// New route to test if the database is connected
+// Database test route
 app.get('/test-db', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
@@ -24,6 +25,9 @@ app.get('/test-db', async (req, res) => {
     res.status(500).json({ error: 'Database connection failed' });
   }
 });
+
+// Use Auth Routes (This means the login link will be /api/auth/login)
+app.use('/api/auth', authRoutes);
 
 // Start server
 const PORT = process.env.PORT || 10000;
