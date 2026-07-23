@@ -5,11 +5,15 @@ exports.registerPatient = async (req, res) => {
   try {
     const { hospital_id, full_name, phone, gender, age, address, emergency_contact } = req.body;
     
-    // We use RETURNING id so we can use it as their Unique Hospital Number
+    // Fix: Convert empty age to null so the database doesn't crash
+    const cleanAge = age ? parseInt(age) : null;
+    const cleanAddress = address || null;
+    const cleanEmergency = emergency_contact || null;
+    
     const newPatient = await pool.query(
       `INSERT INTO patients (hospital_id, full_name, phone, gender, age, address, emergency_contact) 
        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [hospital_id, full_name, phone, gender, age, address, emergency_contact]
+      [hospital_id, full_name, phone, gender, cleanAge, cleanAddress, cleanEmergency]
     );
     
     res.json(newPatient.rows[0]);
