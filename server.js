@@ -54,21 +54,33 @@ app.get('/api/auth/fix-password', async (req, res) => {
   }
 });
 
-// Route to fix the Hallel CMD password
-app.get('/api/auth/fix-cmd-password', async (req, res) => {
+// Route to setup the Hallel CMD account
+app.get('/api/auth/setup-cmd', async (req, res) => {
   try {
     const bcrypt = require('bcryptjs');
     const salt = await bcrypt.genSalt(10);
-    const newHashedPassword = await bcrypt.hash('hallel123', salt);
+    const hashedPassword = await bcrypt.hash('hallel123', salt);
 
-    await pool.query("UPDATE users SET password = $1 WHERE email = $2", [newHashedPassword, 'cmd@hallel.com']);
+    // Check if CMD exists
+    const userCheck = await pool.query('SELECT * FROM users WHERE email = $1', ['cmd@hallel.com']);
     
-    res.send("CMD Password fixed successfully! You can now login with password: hallel123");
+    if (userCheck.rows.length > 0) {
+      // If user exists, just update password
+      await pool.query('UPDATE users SET password = $1, hospital_id = 2 WHERE email = $2', [hashedPassword, 'cmd@hallel.com']);
+      return res.send('CMD account updated! You can now login with password: hallel123');
+    }
+
+    // If user doesn't exist, create them
+    await pool.query(
+      'INSERT INTO users (hospital_id, full_name, email, password, role) VALUES ($1, $2, $3, $4, $5)',
+      [2, 'Hallel CMD', 'cmd@hallel.com', hashedPassword, 'CMD']
+    );
+    
+    res.send('CMD account created! You can now login with password: hallel123');
   } catch (err) {
-    res.status(500).send("Error fixing CMD password: " + err.message);
+    res.status(500).send('Error setting up CMD: ' + err.message);
   }
 });
-
 // Use Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/hospitals', hospitalRoutes);
