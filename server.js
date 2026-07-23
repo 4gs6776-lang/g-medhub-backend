@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const pool = require('./src/config/db');
 const authRoutes = require('./src/routes/authRoutes');
+const hospitalRoutes = require('./src/routes/hospitalRoutes');
 
 const app = express();
 
@@ -50,6 +51,8 @@ app.get('/api/auth/fix-password', async (req, res) => {
 
 // Use Auth Routes
 app.use('/api/auth', authRoutes);
+// Use Hospital Routes
+app.use('/api/hospitals', hospitalRoutes);
 
 // Start server
 const PORT = process.env.PORT || 10000;
