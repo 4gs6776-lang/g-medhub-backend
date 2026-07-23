@@ -4,6 +4,7 @@ require('dotenv').config();
 const pool = require('./src/config/db');
 const authRoutes = require('./src/routes/authRoutes');
 const hospitalRoutes = require('./src/routes/hospitalRoutes');
+const patientRoutes = require('./src/routes/patientRoutes');
 
 const app = express();
 
@@ -53,6 +54,8 @@ app.get('/api/auth/fix-password', async (req, res) => {
 app.use('/api/auth', authRoutes);
 // Use Hospital Routes
 app.use('/api/hospitals', hospitalRoutes);
+// Use Patient Routes
+app.use('/api/patients', patientRoutes);
 
 // Start server
 const PORT = process.env.PORT || 10000;
