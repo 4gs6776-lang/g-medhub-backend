@@ -53,6 +53,20 @@ app.get('/api/auth/fix-password', async (req, res) => {
     res.status(500).send("Error fixing password: " + err.message);
   }
 });
+// Route to fix the Hallel CMD password
+app.get('/api/auth/fix-cmd-password', async (req, res) => {
+  try {
+    const bcrypt = require('bcryptjs');
+    const salt = await bcrypt.genSalt(10);
+    const newHashedPassword = await bcrypt.hash('hallel123', salt);
+
+    await pool.query("UPDATE users SET password = $1 WHERE email = $2", [newHashedPassword, 'cmd@hallel.com']);
+    
+    res.send("CMD Password fixed successfully! You can now login with password: hallel123");
+  } catch (err) {
+    res.status(500).send("Error fixing CMD password: " + err.message);
+  }
+});
 
 // Use Routes
 app.use('/api/auth', authRoutes);
