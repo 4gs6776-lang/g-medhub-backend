@@ -33,6 +33,20 @@ app.get('/api/auth/check-user', async (req, res) => {
     res.status(500).json({ success: false, message: "Database error: " + err.message });
   }
 });
+// Route to forcefully fix the Super Admin password
+app.get('/api/auth/fix-password', async (req, res) => {
+  try {
+    const bcrypt = require('bcryptjs');
+    const salt = await bcrypt.genSalt(10);
+    const newHashedPassword = await bcrypt.hash('superadmin123', salt);
+
+    await pool.query("UPDATE users SET password = $1 WHERE email = $2", [newHashedPassword, 'builder@gmedhub.com']);
+    
+    res.send("Password fixed successfully! You can now login with password: superadmin123");
+  } catch (err) {
+    res.status(500).send("Error fixing password: " + err.message);
+  }
+});
 
 // Use Auth Routes
 app.use('/api/auth', authRoutes);
