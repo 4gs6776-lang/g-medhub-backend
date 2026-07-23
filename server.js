@@ -5,6 +5,7 @@ const pool = require('./src/config/db');
 const authRoutes = require('./src/routes/authRoutes');
 const hospitalRoutes = require('./src/routes/hospitalRoutes');
 const patientRoutes = require('./src/routes/patientRoutes');
+const consultRoutes = require('./src/routes/consultRoutes');
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.get('/api/auth/check-user', async (req, res) => {
     res.status(500).json({ success: false, message: "Database error: " + err.message });
   }
 });
+
 // Route to forcefully fix the Super Admin password
 app.get('/api/auth/fix-password', async (req, res) => {
   try {
@@ -50,12 +52,11 @@ app.get('/api/auth/fix-password', async (req, res) => {
   }
 });
 
-// Use Auth Routes
+// Use Routes
 app.use('/api/auth', authRoutes);
-// Use Hospital Routes
 app.use('/api/hospitals', hospitalRoutes);
-// Use Patient Routes
 app.use('/api/patients', patientRoutes);
+app.use('/api/consultations', consultRoutes);
 
 // Start server
 const PORT = process.env.PORT || 10000;
