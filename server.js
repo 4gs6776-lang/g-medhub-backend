@@ -1,20 +1,32 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const pool = require('./src/config/db'); // Import the database connection
 
 const app = express();
 
-// Middleware to understand JSON data
+// Middleware
 app.use(express.json());
 app.use(cors());
 
-// A simple test route to see if the server is working
+// Basic route to check if server is running
 app.get('/', (req, res) => {
   res.send('G-MedHub Backend is Successfully Running!');
 });
 
-// Start the server
-const PORT = process.env.PORT || 5000;
+// New route to test if the database is connected
+app.get('/test-db', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT NOW()');
+    res.json({ message: 'Database connected successfully!', time: result.rows[0].now });
+  } catch (err) {
+    console.error('Database connection error', err);
+    res.status(500).json({ error: 'Database connection failed' });
+  }
+});
+
+// Start server
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
