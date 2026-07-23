@@ -6,6 +6,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const hospitalRoutes = require('./src/routes/hospitalRoutes');
 const patientRoutes = require('./src/routes/patientRoutes');
 const consultRoutes = require('./src/routes/consultRoutes');
+const labRoutes = require('./src/routes/labRoutes');
 
 const app = express();
 
@@ -57,6 +58,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/hospitals', hospitalRoutes);
 app.use('/api/patients', patientRoutes);
 app.use('/api/consultations', consultRoutes);
+app.use('/api/labs', labRoutes);
 
 // Start server
 const PORT = process.env.PORT || 10000;
