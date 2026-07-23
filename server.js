@@ -53,6 +53,7 @@ app.get('/api/auth/fix-password', async (req, res) => {
     res.status(500).send("Error fixing password: " + err.message);
   }
 });
+
 // Route to fix the Hallel CMD password
 app.get('/api/auth/fix-cmd-password', async (req, res) => {
   try {
