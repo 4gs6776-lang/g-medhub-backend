@@ -14,6 +14,7 @@ const appointmentRoutes = require('./src/routes/appointmentRoutes');
 const statsRoutes = require('./src/routes/statsRoutes');
 const drugChartRoutes = require('./src/routes/drugChartRoutes');
 const ancRoutes = require('./src/routes/ancRoutes');
+const rosterRoutes = require('./src/routes/rosterRoutes');
 
 const app = express();
 
@@ -108,6 +109,7 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/drugchart', drugChartRoutes);
 app.use('/api/anc', ancRoutes);
+app.use('/api/roster', rosterRoutes);
 
 // Start server
 const PORT = process.env.PORT || 10000;
