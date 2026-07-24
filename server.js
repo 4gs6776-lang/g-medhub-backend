@@ -8,6 +8,8 @@ const patientRoutes = require('./src/routes/patientRoutes');
 const consultRoutes = require('./src/routes/consultRoutes');
 const labRoutes = require('./src/routes/labRoutes');
 const pharmacyRoutes = require('./src/routes/pharmacyRoutes');
+const nurseRoutes = require('./src/routes/nurseRoutes');
+const billingRoutes = require('./src/routes/billingRoutes');
 
 const app = express();
 
@@ -61,28 +63,23 @@ app.get('/api/auth/setup-cmd', async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash('hallel123', salt);
 
-    // 1. Find Hallel Hospital
     let hospital = await pool.query("SELECT * FROM hospitals WHERE name = 'Hallel Hospital'");
     let hospitalId;
 
     if (hospital.rows.length === 0) {
-      // If it doesn't exist, create it
       const newHospital = await pool.query("INSERT INTO hospitals (name, subscription_tier) VALUES ('Hallel Hospital', 'Premium') RETURNING id");
       hospitalId = newHospital.rows[0].id;
     } else {
       hospitalId = hospital.rows[0].id;
     }
 
-    // 2. Check if CMD exists
     const userCheck = await pool.query('SELECT * FROM users WHERE email = $1', ['cmd@hallel.com']);
     
     if (userCheck.rows.length > 0) {
-      // If user exists, update password and hospital
       await pool.query('UPDATE users SET password = $1, hospital_id = $2 WHERE email = $3', [hashedPassword, hospitalId, 'cmd@hallel.com']);
       return res.send(`CMD account updated for Hospital ID ${hospitalId}! You can now login with password: hallel123`);
     }
 
-    // 3. If user doesn't exist, create them
     await pool.query(
       'INSERT INTO users (hospital_id, full_name, email, password, role) VALUES ($1, $2, $3, $4, $5)',
       [hospitalId, 'Hallel CMD', 'cmd@hallel.com', hashedPassword, 'CMD']
@@ -101,6 +98,8 @@ app.use('/api/patients', patientRoutes);
 app.use('/api/consultations', consultRoutes);
 app.use('/api/labs', labRoutes);
 app.use('/api/pharmacy', pharmacyRoutes);
+app.use('/api/nurse', nurseRoutes);
+app.use('/api/billing', billingRoutes);
 
 // Start server
 const PORT = process.env.PORT || 10000;
