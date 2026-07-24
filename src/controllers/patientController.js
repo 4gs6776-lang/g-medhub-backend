@@ -12,7 +12,7 @@ exports.getAllPatients = async (req, res) => {
   }
 };
 
-// Get ALL ANC patients for a hospital (Auto-update feature)
+// Get ALL ANC patients for a hospital
 exports.getAncPatients = async (req, res) => {
   try {
     const { hospital_id } = req.query;
@@ -33,7 +33,8 @@ exports.registerPatient = async (req, res) => {
     const { 
       hospital_id, surname, other_names, phone, email, gender, marital_status, dob, age, blood_group,
       address, state_of_origin, nationality, occupation, religion, category,
-      next_of_kin_name, next_of_kin_relationship, next_of_kin_phone, next_of_kin_address 
+      next_of_kin_name, next_of_kin_relationship, next_of_kin_phone, next_of_kin_address,
+      special_point, booking_date, indication_for_booking, lmp, edd, husband_name, husband_occupation, employer
     } = req.body;
     
     const full_name = `${surname} ${other_names}`;
@@ -44,11 +45,13 @@ exports.registerPatient = async (req, res) => {
       `INSERT INTO patients (
         hospital_id, full_name, surname, other_names, phone, email, gender, marital_status, dob, age, blood_group,
         address, state_of_origin, nationality, occupation, religion, category,
-        next_of_kin_name, next_of_kin_relationship, next_of_kin_phone, next_of_kin_address
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21) RETURNING *`,
+        next_of_kin_name, next_of_kin_relationship, next_of_kin_phone, next_of_kin_address,
+        special_point, booking_date, indication_for_booking, lmp, edd, husband_name, husband_occupation, employer
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30) RETURNING *`,
       [hospital_id, full_name, surname, other_names, phone, email, gender, marital_status, dob, cleanAge, blood_group,
        address, state_of_origin, nationality, occupation, religion, cleanCategory,
-       next_of_kin_name, next_of_kin_relationship, next_of_kin_phone, next_of_kin_address]
+       next_of_kin_name, next_of_kin_relationship, next_of_kin_phone, next_of_kin_address,
+       special_point || null, booking_date || null, indication_for_booking || null, lmp || null, edd || null, husband_name || null, husband_occupation || null, employer || null]
     );
     
     res.json(newPatient.rows[0]);
