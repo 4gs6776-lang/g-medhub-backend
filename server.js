@@ -19,6 +19,7 @@ const wardRoutes = require('./src/routes/wardRoutes');
 const hmoRoutes = require('./src/routes/hmoRoutes');
 const reportRoutes = require('./src/routes/reportRoutes');
 const auditRoutes = require('./src/routes/auditRoutes');
+const userRoutes = require('./src/routes/userRoutes');
 
 const app = express();
 
@@ -31,13 +32,12 @@ app.get('/', (req, res) => {
   res.send('G-MedHub Backend is Successfully Running!');
 });
 
-// AUDIT LOGGING MIDDLEWARE (Tracks actions automatically)
+// AUDIT LOGGING MIDDLEWARE
 app.use(async (req, res, next) => {
   try {
-    // Only log POST, PUT, DELETE actions (ignores GET which just fetches data)
     if (req.method !== 'GET' && req.path !== '/api/auth/login' && req.path !== '/api/auth/check-user' && req.path !== '/api/auth/fix-password') {
-      const hospital_id = req.body.hospital_id || 1; // Default to 1 if not provided
-      const user_name = req.body.administering_nurse || req.body.doctor_name || 'Staff';
+      const hospital_id = req.body.hospital_id || 1;
+      const user_name = req.body.administering_nurse || req.body.doctor_name || req.body.staff_name || 'Staff';
       const action = `${req.method} request to ${req.path}`;
       
       await pool.query(
@@ -138,6 +138,7 @@ app.use('/api/wards', wardRoutes);
 app.use('/api/hmo', hmoRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/audit', auditRoutes);
+app.use('/api/users', userRoutes);
 
 // Start server
 const PORT = process.env.PORT || 10000;
