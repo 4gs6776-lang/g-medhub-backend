@@ -16,23 +16,21 @@ exports.getAllPatients = async (req, res) => {
 exports.registerPatient = async (req, res) => {
   try {
     const { 
-      hospital_id, surname, other_names, phone, gender, marital_status, dob, age, 
+      hospital_id, surname, other_names, phone, email, gender, marital_status, dob, age, blood_group,
       address, state_of_origin, nationality, occupation, religion, 
       next_of_kin_name, next_of_kin_relationship, next_of_kin_phone, next_of_kin_address 
     } = req.body;
     
-    // Combine surname and other names for the full_name column
     const full_name = `${surname} ${other_names}`;
-    
     const cleanAge = age ? parseInt(age) : null;
     
     const newPatient = await pool.query(
       `INSERT INTO patients (
-        hospital_id, full_name, surname, other_names, phone, gender, marital_status, dob, age, 
+        hospital_id, full_name, surname, other_names, phone, email, gender, marital_status, dob, age, blood_group,
         address, state_of_origin, nationality, occupation, religion, 
         next_of_kin_name, next_of_kin_relationship, next_of_kin_phone, next_of_kin_address
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18) RETURNING *`,
-      [hospital_id, full_name, surname, other_names, phone, gender, marital_status, dob, cleanAge, 
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20) RETURNING *`,
+      [hospital_id, full_name, surname, other_names, phone, email, gender, marital_status, dob, cleanAge, blood_group,
        address, state_of_origin, nationality, occupation, religion, 
        next_of_kin_name, next_of_kin_relationship, next_of_kin_phone, next_of_kin_address]
     );
