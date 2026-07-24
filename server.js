@@ -17,6 +17,7 @@ const ancRoutes = require('./src/routes/ancRoutes');
 const rosterRoutes = require('./src/routes/rosterRoutes');
 const wardRoutes = require('./src/routes/wardRoutes');
 const hmoRoutes = require('./src/routes/hmoRoutes');
+const reportRoutes = require('./src/routes/reportRoutes');
 
 const app = express();
 
@@ -114,6 +115,7 @@ app.use('/api/anc', ancRoutes);
 app.use('/api/roster', rosterRoutes);
 app.use('/api/wards', wardRoutes);
 app.use('/api/hmo', hmoRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Start server
 const PORT = process.env.PORT || 10000;
