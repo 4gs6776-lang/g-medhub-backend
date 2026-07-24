@@ -27,19 +27,20 @@ exports.addStaff = async (req, res) => {
       return res.status(400).json({ message: 'A user with this email already exists.' });
     }
 
-    // Encrypt the password
+    // Encrypt the password (allows any length)
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     
     const newStaff = await pool.query(
       `INSERT INTO users (hospital_id, full_name, email, password, role) 
        VALUES ($1, $2, $3, $4, $5) RETURNING id, full_name, email, role`,
-      [hospital_id, full_name, email, hashedPassword, role]
+      [hospital_id || null, full_name || null, email, hashedPassword, role || 'Staff']
     );
     
     res.json(newStaff.rows[0]);
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ message: 'Server Error' });
+    // Return the EXACT error message to help us debug
+    res.status(500).json({ message: 'Server Error: ' + err.message });
   }
 };
