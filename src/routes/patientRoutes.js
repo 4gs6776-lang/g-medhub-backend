@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { registerPatient, searchPatients } = require('../controllers/patientController');
+const { getAllPatients, registerPatient, searchPatients } = require('../controllers/patientController');
+
+// @route   GET /api/patients
+// @desc    Get all patients
+router.get('/', getAllPatients);
 
 // @route   POST /api/patients/register
 // @desc    Register a new patient
