@@ -1,11 +1,25 @@
 const pool = require('../config/db');
 
+// Get ALL patients for a hospital
+exports.getAllPatients = async (req, res) => {
+  try {
+    const { hospital_id } = req.query;
+    const patients = await pool.query(
+      'SELECT * FROM patients WHERE hospital_id = $1 ORDER BY created_at DESC', 
+      [hospital_id]
+    );
+    res.json(patients.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 // Register a new patient
 exports.registerPatient = async (req, res) => {
   try {
     const { hospital_id, full_name, phone, gender, age, address, emergency_contact } = req.body;
     
-    // Fix: Convert empty age to null so the database doesn't crash
     const cleanAge = age ? parseInt(age) : null;
     const cleanAddress = address || null;
     const cleanEmergency = emergency_contact || null;
