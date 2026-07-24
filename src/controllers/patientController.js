@@ -4,10 +4,7 @@ const pool = require('../config/db');
 exports.getAllPatients = async (req, res) => {
   try {
     const { hospital_id } = req.query;
-    const patients = await pool.query(
-      'SELECT * FROM patients WHERE hospital_id = $1 ORDER BY created_at DESC', 
-      [hospital_id]
-    );
+    const patients = await pool.query('SELECT * FROM patients WHERE hospital_id = $1 ORDER BY created_at DESC', [hospital_id]);
     res.json(patients.rows);
   } catch (err) {
     console.error(err.message);
@@ -15,19 +12,29 @@ exports.getAllPatients = async (req, res) => {
   }
 };
 
-// Register a new patient
+// Register a new patient with full biodata
 exports.registerPatient = async (req, res) => {
   try {
-    const { hospital_id, full_name, phone, gender, age, address, emergency_contact } = req.body;
+    const { 
+      hospital_id, surname, other_names, phone, gender, marital_status, dob, age, 
+      address, state_of_origin, nationality, occupation, religion, 
+      next_of_kin_name, next_of_kin_relationship, next_of_kin_phone, next_of_kin_address 
+    } = req.body;
+    
+    // Combine surname and other names for the full_name column
+    const full_name = `${surname} ${other_names}`;
     
     const cleanAge = age ? parseInt(age) : null;
-    const cleanAddress = address || null;
-    const cleanEmergency = emergency_contact || null;
     
     const newPatient = await pool.query(
-      `INSERT INTO patients (hospital_id, full_name, phone, gender, age, address, emergency_contact) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [hospital_id, full_name, phone, gender, cleanAge, cleanAddress, cleanEmergency]
+      `INSERT INTO patients (
+        hospital_id, full_name, surname, other_names, phone, gender, marital_status, dob, age, 
+        address, state_of_origin, nationality, occupation, religion, 
+        next_of_kin_name, next_of_kin_relationship, next_of_kin_phone, next_of_kin_address
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18) RETURNING *`,
+      [hospital_id, full_name, surname, other_names, phone, gender, marital_status, dob, cleanAge, 
+       address, state_of_origin, nationality, occupation, religion, 
+       next_of_kin_name, next_of_kin_relationship, next_of_kin_phone, next_of_kin_address]
     );
     
     res.json(newPatient.rows[0]);
