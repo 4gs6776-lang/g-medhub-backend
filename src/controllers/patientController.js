@@ -47,7 +47,7 @@ exports.registerPatient = async (req, res) => {
         address, state_of_origin, nationality, occupation, religion, category,
         next_of_kin_name, next_of_kin_relationship, next_of_kin_phone, next_of_kin_address,
         special_point, booking_date, indication_for_booking, lmp, edd, husband_name, husband_occupation, employer
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30) RETURNING *`,
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29) RETURNING *`,
       [hospital_id, full_name, surname, other_names, phone, email, gender, marital_status, dob, cleanAge, blood_group,
        address, state_of_origin, nationality, occupation, religion, cleanCategory,
        next_of_kin_name, next_of_kin_relationship, next_of_kin_phone, next_of_kin_address,
@@ -57,7 +57,7 @@ exports.registerPatient = async (req, res) => {
     res.json(newPatient.rows[0]);
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: 'Server Error: ' + err.message });
   }
 };
 
