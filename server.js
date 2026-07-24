@@ -13,6 +13,7 @@ const billingRoutes = require('./src/routes/billingRoutes');
 const appointmentRoutes = require('./src/routes/appointmentRoutes');
 const statsRoutes = require('./src/routes/statsRoutes');
 const drugChartRoutes = require('./src/routes/drugChartRoutes');
+const ancRoutes = require('./src/routes/ancRoutes');
 
 const app = express();
 
@@ -106,6 +107,7 @@ app.use('/api/billing', billingRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/drugchart', drugChartRoutes);
+app.use('/api/anc', ancRoutes);
 
 // Start server
 const PORT = process.env.PORT || 10000;
