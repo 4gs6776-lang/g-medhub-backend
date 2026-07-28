@@ -139,6 +139,7 @@ app.use('/api/hmo', hmoRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/seed', require('./routes/seed'));
 
 // Start server
 const PORT = process.env.PORT || 10000;
