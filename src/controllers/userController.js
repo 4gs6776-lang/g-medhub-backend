@@ -21,13 +21,11 @@ exports.addStaff = async (req, res) => {
   try {
     const { hospital_id, full_name, email, password, role } = req.body;
     
-    // Check if user already exists
     const userCheck = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (userCheck.rows.length > 0) {
       return res.status(400).json({ message: 'A user with this email already exists.' });
     }
 
-    // Encrypt the password (allows any length)
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     
@@ -40,7 +38,35 @@ exports.addStaff = async (req, res) => {
     res.json(newStaff.rows[0]);
   } catch (err) {
     console.error(err.message);
-    // Return the EXACT error message to help us debug
+    res.status(500).json({ message: 'Server Error: ' + err.message });
+  }
+};
+
+// Delete a staff member
+exports.deleteStaff = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query('DELETE FROM users WHERE id = $1', [id]);
+    res.json({ message: 'Staff account deleted successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Server Error: ' + err.message });
+  }
+};
+
+// Reset Password (Recreate)
+exports.resetPassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newPassword } = req.body;
+    
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    
+    await pool.query('UPDATE users SET password = $1 WHERE id = $2', [hashedPassword, id]);
+    res.json({ message: 'Password reset successfully' });
+  } catch (err) {
+    console.error(err.message);
     res.status(500).json({ message: 'Server Error: ' + err.message });
   }
 };
